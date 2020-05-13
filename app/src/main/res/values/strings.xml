@@ -1,3 +1,30 @@
 <resources>
-    <string name="app_name">BLTCarKey</string>
+    <string name="app_name">数字钥匙</string>
+
+    <string name="left_front_door">左前门</string>
+    <string name="right_front_door">右前门</string>
+    <string name="left_back_door">左后门</string>
+    <string name="right_back_door">右后门</string>
+
+    <string name="left_front_window">左前窗</string>
+    <string name="right_front_window">右前窗</string>
+    <string name="left_back_window">左后窗</string>
+    <string name="right_back_window">右后窗</string>
+
+    <string name="car_hood">引擎盖</string>
+    <string name="car_trunk">后备箱</string>
+    <string name="car_horn">喇叭</string>
+    <string name="car_light">大灯</string>
+
+    <string name="query_bl">获取蓝牙</string>
+    <string name="bl_querying">获取蓝牙</string>
+    <string name="bl_off">蓝牙未开启</string>
+    <string name="bl_on">蓝牙已开启</string>
+
+    <string name="bl_scan">扫描蓝牙</string>
+    <string name="bl_scanning">蓝牙扫描中</string>
+    <string name="bl_scan_stop">未扫描蓝牙</string>
+
+    <string name="bl_null">蓝牙服务启动失败，请退出后重新进入</string>
+
 </resources>

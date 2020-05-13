@@ -3,4 +3,10 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+
+    <color name="pb_range_color">#40E0D0</color>
+    <color name="pe_range_color">#FFDAB9</color>
+    <color name="ps_range_color">#90EE90</color>
+
+
 </resources>
