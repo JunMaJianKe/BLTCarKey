@@ -121,7 +121,7 @@ public class SplashActivity extends Activity implements View.OnClickListener,
                         }
                         break;
                     case Config.BLE_STATUS_SCANING:
-                        AlertDialog dialog = new AlertDialog.Builder().setT;
+//                        AlertDialog dialog = new AlertDialog.Builder(.setT;
                         break;
                 }
 
