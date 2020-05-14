@@ -5,9 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
-import com.neo.bltcarkey.callback.OperationFeedBack;
+import com.neo.bltcarkey.listener.OperationFeedBack;
 import com.neo.bltcarkey.common.Config;
 import com.neo.bltcarkey.common.Utils;
 import com.neo.bltcarkey.widget.BleKeyLayout;
@@ -16,7 +15,6 @@ import java.util.List;
 
 /**
  * author : SenXia
- * e-mail : Sen_Xia@human-horizons.com
  * time   : 2020/01/08
  * desc   : This is DigitalKeyActivity
  * version: 1.0

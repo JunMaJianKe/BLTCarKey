@@ -13,7 +13,8 @@
         <com.neo.bltcarkey.widget.BleKeyLayout
             android:id="@+id/ble_key_layout"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:background="@drawable/car_white_grey"/>
     </FrameLayout>
 
     <LinearLayout

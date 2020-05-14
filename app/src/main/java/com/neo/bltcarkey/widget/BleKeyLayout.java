@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.core.content.ContextCompat;
 
@@ -13,7 +14,6 @@ import com.neo.bltcarkey.common.Config;
 
 /**
  * author : SenXia
- * e-mail : Sen_Xia@human-horizons.com
  * time   : 2020/05/13
  * desc   : This is BleKeyLayout
  * version: 1.0

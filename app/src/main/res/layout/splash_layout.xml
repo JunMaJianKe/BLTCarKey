@@ -6,6 +6,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
+        android:layout_marginTop="100dp"
         android:layout_height="0dp"
         android:layout_weight="1">
 
@@ -21,6 +22,7 @@
             android:id="@+id/query_bl_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:layout_toRightOf="@id/query_bl"
             android:layout_alignBottom="@id/query_bl"
             android:text="@string/bl_off"/>
@@ -41,6 +43,14 @@
             android:layout_toRightOf="@id/scan_ble"
             android:layout_alignBottom="@id/scan_ble"
             android:text="@string/bl_scan_stop" />
+        <TextView
+            android:id="@+id/connect_ble_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@id/scan_ble_status"
+            android:layout_alignBottom="@id/scan_ble"
+            android:text="@string/bl_connect_no" />
     </RelativeLayout>
 
     <ListView

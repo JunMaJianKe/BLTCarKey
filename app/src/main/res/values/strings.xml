@@ -23,8 +23,20 @@
 
     <string name="bl_scan">扫描蓝牙</string>
     <string name="bl_scanning">蓝牙扫描中</string>
+    <string name="bl_scanning_stop">蓝牙扫描中断</string>
     <string name="bl_scan_stop">未扫描蓝牙</string>
+
+    <string name="bl_connect_no">未连接蓝牙</string>
+    <string name="bl_connect_success">蓝牙连接成功</string>
+    <string name="bl_connect_failed">蓝牙连接失败</string>
+    <string name="bl_disconnect">蓝牙连接中断</string>
 
     <string name="bl_null">蓝牙服务启动失败，请退出后重新进入</string>
 
+    <string name="bl_devices">设备：</string>
+    <string name="bl_name">名称：</string>
+    <string name="bl_rssi">强度：</string>
+    <string name="bl_not_connect">未连接</string>
+    <string name="bl_linking">正在连接</string>
+    <string name="bl_connected">已经连接</string>
 </resources>
