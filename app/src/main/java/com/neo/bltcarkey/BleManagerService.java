@@ -14,8 +14,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
 import com.neo.bltcarkey.callback.BleGattCallback;
@@ -46,6 +49,22 @@ public class BleManagerService extends Service implements IBleConnectListener {
     private BluetoothGatt mGatt;
     private BluetoothGattService mGattService;
     private BluetoothGattCharacteristic mGattCharacteristic;
+
+
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case Config.MESSAGE_WHAT_READ_RSSI:
+                    if (mGattService != null && mGatt != null) {
+                        mGatt.readRemoteRssi();
+                        stopReadRssi();
+                    }
+                    break;
+            }
+        }
+    };
 
     @Override
     public void onCreate() {
@@ -82,9 +101,10 @@ public class BleManagerService extends Service implements IBleConnectListener {
             if (mBleReceiver != null) {
                 mBleReceiver.onBleDisconnect();
                 mGatt = null;
+                mGattService = null;
             }
+            stopReadRssi();
         }
-
     }
 
     @Override
@@ -93,6 +113,8 @@ public class BleManagerService extends Service implements IBleConnectListener {
         mGattService = gatt.getService(Commons.BLE_SERVICE_UUID);
         //获取指定uuid的Characteristic
         mGattCharacteristic = mGattService.getCharacteristic(Commons.BLE_CHARACTERISTIC_UUID);
+
+        startReadRssi();
 
     }
 
@@ -185,4 +207,16 @@ public class BleManagerService extends Service implements IBleConnectListener {
         }
         return builder.build();
     }
+
+    private void startReadRssi() {
+        stopReadRssi();
+        mHandler.sendEmptyMessageDelayed(Config.MESSAGE_WHAT_READ_RSSI, 1000);
+    }
+
+    private void stopReadRssi() {
+        if (mHandler.hasMessages(Config.MESSAGE_WHAT_READ_RSSI)) {
+            mHandler.removeMessages(Config.MESSAGE_WHAT_READ_RSSI);
+        }
+    }
+
 }

@@ -22,7 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DigitalKeyActivity" />
+        <activity android:name=".DigitalKeyActivity"></activity>
 
         <service android:name=".BleManagerService">
             <intent-filter>

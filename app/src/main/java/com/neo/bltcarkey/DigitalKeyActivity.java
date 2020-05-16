@@ -23,7 +23,6 @@ public class DigitalKeyActivity extends Activity implements OperationFeedBack,
         View.OnClickListener {
 
     private BleKeyLayout mBleKeyLayout;
-    private Button mQueryBl;
     private Button mLeftFrontDoor;
     private Button mRightFrontDoor;
     private Button mLeftBackDoor;
@@ -49,15 +48,20 @@ public class DigitalKeyActivity extends Activity implements OperationFeedBack,
     }
 
     @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        mBleKeyLayout.setStatus(Config.STATUS_PB);
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
     }
 
     @Override
     public void onClick(View view) {
         if (mBleManager == null) {
-            Utils.showToast(this,R.string.bl_null);
+            Utils.showToast(this, R.string.bl_null);
             return;
         }
         switch (view.getId()) {
@@ -96,9 +100,6 @@ public class DigitalKeyActivity extends Activity implements OperationFeedBack,
                 break;
             case R.id.car_light:
                 mBleManager.onControlLight();
-                break;
-            case R.id.query_bl:
-                mBleManager.onQueryBl();
                 break;
         }
     }
@@ -139,7 +140,6 @@ public class DigitalKeyActivity extends Activity implements OperationFeedBack,
 
     private void initView() {
         mBleKeyLayout = findViewById(R.id.ble_key_layout);
-        mQueryBl = findViewById(R.id.query_bl);
         mLeftFrontDoor = findViewById(R.id.leftfront_door);
         mRightFrontDoor = findViewById(R.id.rightfront_door);
         mLeftBackDoor = findViewById(R.id.leftback_door);
@@ -155,7 +155,6 @@ public class DigitalKeyActivity extends Activity implements OperationFeedBack,
         mCarHorn = findViewById(R.id.car_horn);
         mCarLight = findViewById(R.id.car_light);
 
-        mQueryBl.setOnClickListener(this);
         mLeftFrontDoor.setOnClickListener(this);
         mRightFrontDoor.setOnClickListener(this);
         mLeftBackDoor.setOnClickListener(this);
@@ -169,6 +168,4 @@ public class DigitalKeyActivity extends Activity implements OperationFeedBack,
         mCarTruck.setOnClickListener(this);
         mCarHood.setOnClickListener(this);
     }
-
-
 }

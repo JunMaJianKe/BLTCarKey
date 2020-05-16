@@ -55,6 +55,7 @@ public class SplashActivity extends Activity implements View.OnClickListener,
     private static final String SCAN_RESULT_KEY = "scan_result_key";
     private static final int MESSAGE_WHAT_CANCLE_SCAN_BLE = 1;
     private static final int MESSAGE_WHAT_SCAN_BLE_RESULT = 2;
+    private static final int MESSAGE_WHAT_CONNECT_BLE_RESULT = 3;
     private static final int MESSAGE_DELAY = 5000;
     int i = 0;
     private Handler mHandler = new Handler() {
@@ -71,6 +72,26 @@ public class SplashActivity extends Activity implements View.OnClickListener,
                     ScanResult result = bundle.getParcelable(SCAN_RESULT_KEY);
                     mBleAdapter.addData(result);
                     i++;
+                    break;
+                case MESSAGE_WHAT_CONNECT_BLE_RESULT:
+                    Intent intents = new Intent(SplashActivity.this, DigitalKeyActivity.class);
+                    startActivity(intents);
+                    int status = msg.arg1;
+                    if (status == Config.CONNECT_BLE_SUCCESS) {
+                        Log.w(tag, "Connect success");
+                        mConnectlStatus.setText(R.string.bl_connect_success);
+                        Intent intent = new Intent(SplashActivity.this, DigitalKeyActivity.class);
+                        startActivity(intent);
+                    } else if (status == Config.CONNECT_BLE_FAILED) {
+                        Log.w(tag, "Connect failed");
+                        mConnectlStatus.setText(R.string.bl_connect_failed);
+                    } else if (status == Config.CONNECT_BLE_DISCONNECT) {
+                        Log.w(tag, "Connect disconnect");
+                        mConnectlStatus.setText(R.string.bl_disconnect);
+                    } else {
+                        Log.w(tag, "Connect warning");
+                    }
+                    mItemCanClick = true;
                     break;
             }
 
@@ -165,6 +186,7 @@ public class SplashActivity extends Activity implements View.OnClickListener,
             ScanResult result = mBleAdapter.getItem(i);
             BluetoothDevice devices = result.getDevice();
             mLocalBinder.connectBle(devices);
+            mConnectlStatus.setText(R.string.bl_connectting);
         }
     }
 
@@ -277,15 +299,9 @@ public class SplashActivity extends Activity implements View.OnClickListener,
 
     @Override
     public void onUpdateConnectStatus(BluetoothDevice device, int status) {
-        mItemCanClick = true;
-        if (status == Config.CONNECT_BLE_SUCCESS) {
-            mConnectlStatus.setText(R.string.bl_connect_success);
-            Intent intent = new Intent(this, DigitalKeyActivity.class);
-            startActivity(intent);
-        } else if(status == Config.CONNECT_BLE_FAILED){
-            mConnectlStatus.setText(R.string.bl_connect_failed);
-        }else if(status == Config.CONNECT_BLE_DISCONNECT){
-            mConnectlStatus.setText(R.string.bl_disconnect);
-        }
+        Message msg = Message.obtain();
+        msg.arg1 = status;
+        msg.what = MESSAGE_WHAT_CONNECT_BLE_RESULT;
+        mHandler.sendMessage(msg);
     }
 }

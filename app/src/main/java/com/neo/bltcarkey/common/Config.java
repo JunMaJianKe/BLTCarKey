@@ -11,6 +11,7 @@ public class Config {
     public static final int STATUS_PB = 0x0000;
     public static final int STATUS_PE = 0x0001;
     public static final int STATUS_PS = 0x0002;
+    public static final int STATUS_DEFAULT = 0x0003;
 
     public static final int CONTROL_POSITION_LEFT_FRONT = 0x0001;
     public static final int CONTROL_POSITION_RIGHT_FRONT = 0x0002;
@@ -28,5 +29,8 @@ public class Config {
     public static final int CONNECT_BLE_SUCCESS = 0x0001;
     public static final int CONNECT_BLE_DISCONNECT = 0x0001;
     public static final int CONNECT_BLE_FAILED = 0x0002;
+
+    public static final int MESSAGE_WHAT_READ_RSSI = 0x0001;
+    public static final int READ_RSSI_DURATION = 1000;
 
 }
