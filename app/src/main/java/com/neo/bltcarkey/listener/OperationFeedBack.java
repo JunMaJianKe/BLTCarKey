@@ -16,4 +16,6 @@ public interface OperationFeedBack {
     void onUpdateKeyDistance(int status);
 
     void onBLeScan(int status, List<String> list);
+
+    void onUpdateRssi(int rssi);
 }

@@ -34,8 +34,14 @@ public class BleGattCallback extends BluetoothGattCallback {
             if (newState == BluetoothGatt.STATE_CONNECTED) {
                 Log.i("Bluetooth", "连接成功");
                 mIBleConnectStatus.onUpdateConnectStatus(gatt.getDevice(), Config.CONNECT_BLE_SUCCESS);
-                gatt.discoverServices();
-            } else if(newState == BluetoothGatt.STATE_DISCONNECTED){
+                try {
+                    Thread.sleep(2000);
+                    gatt.discoverServices();
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } else if (newState == BluetoothGatt.STATE_DISCONNECTED) {
                 Log.i("Bluetooth", "断开连接");
                 gatt.close();
                 mIBleConnectStatus.onUpdateConnectStatus(gatt.getDevice(), Config.CONNECT_BLE_DISCONNECT);
@@ -92,10 +98,8 @@ public class BleGattCallback extends BluetoothGattCallback {
     public void onReadRemoteRssi(BluetoothGatt gatt, int rssi, int status) {
         Log.i(tag, "gatt: " + gatt.toString() + ", rssi: " + rssi + ", status: " + status);
         super.onReadRemoteRssi(gatt, rssi, status);
-        if (status == BluetoothGatt.GATT_SUCCESS) {
-//            final Intent intent = new Intent(ACTION_READ_RSSI);
-//            intent.putExtra(EXTRA_DATA, String.valueOf(rssi));
-//            sendBroadcast(intent);
+        if (status == BluetoothGatt.GATT_SUCCESS && mIBleConnectStatus != null) {
+            mIBleConnectStatus.setRssi(rssi);
         }
     }
 

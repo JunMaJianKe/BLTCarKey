@@ -17,6 +17,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -59,7 +60,7 @@ public class BleManagerService extends Service implements IBleConnectListener {
                 case Config.MESSAGE_WHAT_READ_RSSI:
                     if (mGattService != null && mGatt != null) {
                         mGatt.readRemoteRssi();
-                        stopReadRssi();
+                        startReadRssi();
                     }
                     break;
             }
@@ -116,6 +117,14 @@ public class BleManagerService extends Service implements IBleConnectListener {
 
         startReadRssi();
 
+    }
+
+    @Override
+    public void setRssi(int rssi) {
+//        Toast.makeText(this, "rssi=" + rssi, Toast.LENGTH_SHORT).show();
+        if (mBleReceiver != null) {
+            mBleReceiver.onUpdateRssi(rssi);
+        }
     }
 
     public class LocalBinder extends Binder {
@@ -210,7 +219,7 @@ public class BleManagerService extends Service implements IBleConnectListener {
 
     private void startReadRssi() {
         stopReadRssi();
-        mHandler.sendEmptyMessageDelayed(Config.MESSAGE_WHAT_READ_RSSI, 1000);
+        mHandler.sendEmptyMessageDelayed(Config.MESSAGE_WHAT_READ_RSSI, 300);
     }
 
     private void stopReadRssi() {

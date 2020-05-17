@@ -3,8 +3,14 @@ package com.neo.bltcarkey;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 import com.neo.bltcarkey.listener.OperationFeedBack;
 import com.neo.bltcarkey.common.Config;
@@ -37,7 +43,40 @@ public class DigitalKeyActivity extends Activity implements OperationFeedBack,
     private Button mCarHorn;
     private Button mCarLight;
 
+    private TextView tv_rssi;
+    private EditText etv_pb;
+    private EditText etv_pe;
+    private Button pbtn;
+    private int mCurrentPe = 75;
+    private int mCurrentPb = 90;
+
+
     private BleManager mBleManager;
+
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            if (msg.what == 1) {
+                int rssi = msg.arg1;
+                tv_rssi.setText("rssi:" + rssi);
+                if (mBleKeyLayout == null) {
+                    return;
+                }
+                int AbsRssi = Math.abs(rssi);
+                if (AbsRssi <= mCurrentPe) {
+                    mBleKeyLayout.setStatus(Config.STATUS_PS);
+                } else if (AbsRssi > mCurrentPe && AbsRssi <= mCurrentPb) {
+                    mBleKeyLayout.setStatus(Config.STATUS_PE);
+                } else if (AbsRssi > mCurrentPb) {
+                    mBleKeyLayout.setStatus(Config.STATUS_PB);
+                }
+            } else if (msg.what == 2) {
+
+            }
+
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +140,13 @@ public class DigitalKeyActivity extends Activity implements OperationFeedBack,
             case R.id.car_light:
                 mBleManager.onControlLight();
                 break;
+            case R.id.btn_p:
+                String pe = etv_pe.getText().toString();
+                String pb = etv_pb.getText().toString();
+
+                mCurrentPe = Integer.valueOf(pe);
+                mCurrentPb = Integer.valueOf(pb);
+                break;
         }
     }
 
@@ -133,6 +179,14 @@ public class DigitalKeyActivity extends Activity implements OperationFeedBack,
 
     }
 
+    @Override
+    public void onUpdateRssi(int rssi) {
+        Message msg = Message.obtain();
+        msg.what = 1;
+        msg.arg1 = rssi;
+        mHandler.sendMessage(msg);
+    }
+
     private void initBle() {
         mBleManager = new BleManager(this, this);
     }
@@ -154,6 +208,8 @@ public class DigitalKeyActivity extends Activity implements OperationFeedBack,
         mCarTruck = findViewById(R.id.car_trunk);
         mCarHorn = findViewById(R.id.car_horn);
         mCarLight = findViewById(R.id.car_light);
+        tv_rssi = findViewById(R.id.tv_rssi);
+
 
         mLeftFrontDoor.setOnClickListener(this);
         mRightFrontDoor.setOnClickListener(this);
@@ -167,5 +223,10 @@ public class DigitalKeyActivity extends Activity implements OperationFeedBack,
         mCarHorn.setOnClickListener(this);
         mCarTruck.setOnClickListener(this);
         mCarHood.setOnClickListener(this);
+
+        etv_pb = findViewById(R.id.tv_pb);
+        etv_pe = findViewById(R.id.tv_pe);
+        pbtn = findViewById(R.id.btn_p);
+        pbtn.setOnClickListener(this);
     }
 }

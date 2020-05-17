@@ -90,6 +90,7 @@ public class BleManager implements IBleManager, BleReceiveListener {
                 mLocalService.setBleControlListener(null);
                 mLocalService = null;
                 mLocalBinder = null;
+
             }
         };
         Intent bindIntent = new Intent(mContext, BleManagerService.class);
@@ -100,6 +101,13 @@ public class BleManager implements IBleManager, BleReceiveListener {
     public void onBleDisconnect() {
         if (mActivity != null) {
             mActivity.finish();
+        }
+    }
+
+    @Override
+    public void onUpdateRssi(int rssi) {
+        if(mBack!=null){
+            mBack.onUpdateRssi(rssi);
         }
     }
 }
