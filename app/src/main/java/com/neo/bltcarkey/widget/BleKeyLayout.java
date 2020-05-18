@@ -12,6 +12,7 @@ import android.view.View;
 import androidx.core.content.ContextCompat;
 
 import com.neo.bltcarkey.R;
+import com.neo.bltcarkey.common.Commons;
 import com.neo.bltcarkey.common.Config;
 
 /**
@@ -22,6 +23,7 @@ import com.neo.bltcarkey.common.Config;
  */
 public class BleKeyLayout extends View {
 
+    private String tag = getClass().getSimpleName();
     private Paint mPaint;
     private Paint mDrawPaint;
     private int mColorPb;
@@ -51,7 +53,7 @@ public class BleKeyLayout extends View {
         mColorPs = ContextCompat.getColor(context, R.color.ps_range_color);
         initPaint();
 
-        setStatus(Config.STATUS_DEFAULT);
+        setStatus(Commons.STATUS_DEFAULT);
     }
 
     public BleKeyLayout(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -75,13 +77,13 @@ public class BleKeyLayout extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (mCurrentStatus == Config.STATUS_PB) {
+        if (mCurrentStatus == Commons.STATUS_PB) {
             canvas.drawCircle(mCurrentWidth, mCurrentHeight, mCurrentRadiusBig, mPaint);
             canvas.drawBitmap(mBitMapDisplay, mXpos, mYpos, mDrawPaint);
-        } else if (mCurrentStatus == Config.STATUS_PE) {
+        } else if (mCurrentStatus == Commons.STATUS_PE) {
             canvas.drawCircle(mCurrentWidth, mCurrentHeight, (float) mCurrentRadiusSmall, mPaint);
             canvas.drawBitmap(mBitMapDisplay, mXpos, mYpos, mDrawPaint);
-        } else if (mCurrentStatus == Config.STATUS_PS) {
+        } else if (mCurrentStatus == Commons.STATUS_PS) {
             canvas.drawBitmap(mBitMapDisplay, mXpos, mYpos, mDrawPaint);
         } else {
 
@@ -89,20 +91,24 @@ public class BleKeyLayout extends View {
     }
 
     public void setStatus(int status) {
-        Log.d("BleKeyLayout", "status = " + status);
+        Log.d(tag, "status = " + status);
+        if(status == mCurrentStatus){
+            Log.i(tag, "set the same status, so failed");
+            return;
+        }
         switch (status) {
-            case Config.STATUS_PB:
+            case Commons.STATUS_PB:
                 mPaint.setColor(mColorPb);
                 initDraw(R.drawable.car_white_grey);
                 break;
-            case Config.STATUS_PE:
+            case Commons.STATUS_PE:
                 mPaint.setColor(mColorPe);
                 initDraw(R.drawable.car_white_grey);
                 break;
-            case Config.STATUS_PS:
+            case Commons.STATUS_PS:
                 initDraw(R.drawable.car_cyan_blue);
                 break;
-            case Config.STATUS_DEFAULT:
+            case Commons.STATUS_DEFAULT:
                 break;
         }
         mCurrentStatus = status;

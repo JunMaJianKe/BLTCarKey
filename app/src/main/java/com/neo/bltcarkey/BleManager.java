@@ -71,6 +71,7 @@ public class BleManager implements IBleManager, BleReceiveListener {
 
     public void onDestory() {
         mBack = null;
+        mLocalBinder.cancleReadRssi();
         mContext.unbindService(mServiceConnection);
     }
 

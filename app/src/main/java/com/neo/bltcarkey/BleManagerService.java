@@ -25,6 +25,7 @@ import androidx.core.app.ActivityCompat;
 import com.neo.bltcarkey.callback.BleGattCallback;
 import com.neo.bltcarkey.callback.BleScannerCallBack;
 import com.neo.bltcarkey.common.Commons;
+import com.neo.bltcarkey.common.Config;
 import com.neo.bltcarkey.listener.BleReceiveListener;
 import com.neo.bltcarkey.listener.IBleStatus;
 import com.neo.bltcarkey.listener.IBleConnectListener;
@@ -57,7 +58,7 @@ public class BleManagerService extends Service implements IBleConnectListener {
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
-                case Config.MESSAGE_WHAT_READ_RSSI:
+                case Commons.MESSAGE_WHAT_READ_RSSI:
                     if (mGattService != null && mGatt != null) {
                         mGatt.readRemoteRssi();
                         startReadRssi();
@@ -98,7 +99,7 @@ public class BleManagerService extends Service implements IBleConnectListener {
         if (mBlStatus != null) {
             mBlStatus.onUpdateConnectStatus(device, status);
         }
-        if (status != Config.CONNECT_BLE_DISCONNECT) {
+        if (status != Commons.CONNECT_BLE_DISCONNECT) {
             if (mBleReceiver != null) {
                 mBleReceiver.onBleDisconnect();
                 mGatt = null;
@@ -111,9 +112,9 @@ public class BleManagerService extends Service implements IBleConnectListener {
     @Override
     public void setGatt(BluetoothGatt gatt) {
         mGatt = gatt;
-        mGattService = gatt.getService(Commons.BLE_SERVICE_UUID);
+        mGattService = gatt.getService(Config.BLE_SERVICE_UUID);
         //获取指定uuid的Characteristic
-        mGattCharacteristic = mGattService.getCharacteristic(Commons.BLE_CHARACTERISTIC_UUID);
+        mGattCharacteristic = mGattService.getCharacteristic(Config.BLE_CHARACTERISTIC_UUID);
 
         startReadRssi();
 
@@ -132,10 +133,10 @@ public class BleManagerService extends Service implements IBleConnectListener {
         public int getBlStatus() {
             if (mBluetoothAdapter != null) {
                 if (mBluetoothAdapter.isEnabled()) {
-                    return Config.QUERY_BL_STATUS_ON;
+                    return Commons.QUERY_BL_STATUS_ON;
                 }
             }
-            return Config.QUERY_BL_STATUS_OFF;
+            return Commons.QUERY_BL_STATUS_OFF;
         }
 
         public int queryBl() {
@@ -153,7 +154,7 @@ public class BleManagerService extends Service implements IBleConnectListener {
             if (mBluetoothLeScanner != null && mScannerCallBack != null) {
                 mBluetoothLeScanner.startScan(null, getScanSettings(), mScannerCallBack);
                 if (mBlStatus != null) {
-                    mBlStatus.onUpdateScanStatus(Config.BLE_STATUS_SCANING);
+                    mBlStatus.onUpdateScanStatus(Commons.BLE_STATUS_SCANING);
                 }
             }
         }
@@ -163,8 +164,12 @@ public class BleManagerService extends Service implements IBleConnectListener {
                 mBluetoothLeScanner.stopScan(mScannerCallBack);
             }
             if (mBlStatus != null) {
-                mBlStatus.onUpdateScanStatus(Config.BLE_STATUS_NO_SCAN);
+                mBlStatus.onUpdateScanStatus(Commons.BLE_STATUS_NO_SCAN);
             }
+        }
+
+        public void cancleReadRssi(){
+            stopReadRssi();
         }
 
         public void connectBle(BluetoothDevice device) {
@@ -219,12 +224,12 @@ public class BleManagerService extends Service implements IBleConnectListener {
 
     private void startReadRssi() {
         stopReadRssi();
-        mHandler.sendEmptyMessageDelayed(Config.MESSAGE_WHAT_READ_RSSI, 300);
+        mHandler.sendEmptyMessageDelayed(Commons.MESSAGE_WHAT_READ_RSSI, 300);
     }
 
     private void stopReadRssi() {
-        if (mHandler.hasMessages(Config.MESSAGE_WHAT_READ_RSSI)) {
-            mHandler.removeMessages(Config.MESSAGE_WHAT_READ_RSSI);
+        if (mHandler.hasMessages(Commons.MESSAGE_WHAT_READ_RSSI)) {
+            mHandler.removeMessages(Commons.MESSAGE_WHAT_READ_RSSI);
         }
     }
 

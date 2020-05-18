@@ -22,6 +22,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.neo.bltcarkey.adapter.BleAdapter;
+import com.neo.bltcarkey.common.Commons;
 import com.neo.bltcarkey.listener.IBleStatus;
 import com.neo.bltcarkey.common.Config;
 import com.neo.bltcarkey.common.Utils;
@@ -77,15 +78,15 @@ public class SplashActivity extends Activity implements View.OnClickListener,
                     Intent intents = new Intent(SplashActivity.this, DigitalKeyActivity.class);
                     startActivity(intents);
                     int status = msg.arg1;
-                    if (status == Config.CONNECT_BLE_SUCCESS) {
+                    if (status == Commons.CONNECT_BLE_SUCCESS) {
                         Log.w(tag, "Connect success");
                         mConnectlStatus.setText(R.string.bl_connect_success);
                         Intent intent = new Intent(SplashActivity.this, DigitalKeyActivity.class);
                         startActivity(intent);
-                    } else if (status == Config.CONNECT_BLE_FAILED) {
+                    } else if (status == Commons.CONNECT_BLE_FAILED) {
                         Log.w(tag, "Connect failed");
                         mConnectlStatus.setText(R.string.bl_connect_failed);
-                    } else if (status == Config.CONNECT_BLE_DISCONNECT) {
+                    } else if (status == Commons.CONNECT_BLE_DISCONNECT) {
                         Log.w(tag, "Connect disconnect");
                         mConnectlStatus.setText(R.string.bl_disconnect);
                     } else {
@@ -121,11 +122,11 @@ public class SplashActivity extends Activity implements View.OnClickListener,
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
                 Utils.showToast(this, R.string.bl_on);
-                mCurrentBlStatus = Config.QUERY_BL_STATUS_ON;
+                mCurrentBlStatus = Commons.QUERY_BL_STATUS_ON;
                 updateBleStatus();
             } else if (resultCode == RESULT_CANCELED) {
                 Utils.showToast(this, R.string.bl_off);
-                mCurrentBlStatus = Config.QUERY_BL_STATUS_OFF;
+                mCurrentBlStatus = Commons.QUERY_BL_STATUS_OFF;
                 updateBleStatus();
             }
         } else if (requestCode == 2) {
@@ -150,17 +151,17 @@ public class SplashActivity extends Activity implements View.OnClickListener,
             case R.id.query_bl:
                 int result = mLocalBinder.queryBl();
                 if (result == 0) {
-                    mCurrentBlStatus = Config.QUERY_BL_STATUS_OFF;
+                    mCurrentBlStatus = Commons.QUERY_BL_STATUS_OFF;
                     Toast.makeText(this, getResources().getString(R.string.bl_null),
                             Toast.LENGTH_SHORT).show();
                 } else {
-                    mCurrentBlStatus = Config.QUERY_BL_STATUS_QUERYING;
+                    mCurrentBlStatus = Commons.QUERY_BL_STATUS_QUERYING;
                 }
                 updateBleStatus();
                 break;
             case R.id.scan_ble:
                 switch (mCurrentBleScanStatus) {
-                    case Config.BLE_STATUS_NO_SCAN:
+                    case Commons.BLE_STATUS_NO_SCAN:
                         mLocalBinder.scanBl();
                         if (mHandler.hasMessages(MESSAGE_WHAT_CANCLE_SCAN_BLE)) {
                             mHandler.removeMessages(MESSAGE_WHAT_CANCLE_SCAN_BLE);
@@ -168,7 +169,7 @@ public class SplashActivity extends Activity implements View.OnClickListener,
                         mHandler.sendEmptyMessageDelayed(MESSAGE_WHAT_CANCLE_SCAN_BLE,
                                 MESSAGE_DELAY);
                         break;
-                    case Config.BLE_STATUS_SCANING:
+                    case Commons.BLE_STATUS_SCANING:
                         if (mHandler.hasMessages(MESSAGE_WHAT_CANCLE_SCAN_BLE)) {
                             mHandler.removeMessages(MESSAGE_WHAT_CANCLE_SCAN_BLE);
                         }
@@ -205,7 +206,7 @@ public class SplashActivity extends Activity implements View.OnClickListener,
     }
 
     private void resetView() {
-        mCurrentBlStatus = Config.QUERY_BL_STATUS_OFF;
+        mCurrentBlStatus = Commons.QUERY_BL_STATUS_OFF;
         updateBleStatus();
         mConnectlStatus.setText(R.string.bl_connect_no);
         mBleAdapter.resetData();
@@ -214,8 +215,8 @@ public class SplashActivity extends Activity implements View.OnClickListener,
     }
 
     private void initBlManager() {
-        mCurrentBlStatus = Config.QUERY_BL_STATUS_OFF;
-        mCurrentBleScanStatus = Config.BLE_STATUS_NO_SCAN;
+        mCurrentBlStatus = Commons.QUERY_BL_STATUS_OFF;
+        mCurrentBleScanStatus = Commons.BLE_STATUS_NO_SCAN;
         Intent intent = new Intent(this, BleManagerService.class);
         startService(intent);
         mServiceConnection = new ServiceConnection() {
@@ -240,21 +241,21 @@ public class SplashActivity extends Activity implements View.OnClickListener,
 
     private void updateBleStatus() {
         switch (mCurrentBlStatus) {
-            case Config.QUERY_BL_STATUS_OFF:
+            case Commons.QUERY_BL_STATUS_OFF:
                 mQueryBl.setClickable(true);
                 mQueryBlStatus.setText(R.string.bl_off);
-                mCurrentBleScanStatus = Config.BLE_STATUS_NO_SCAN;
+                mCurrentBleScanStatus = Commons.BLE_STATUS_NO_SCAN;
                 mScanBle.setClickable(false);
                 mScanBle.setText(R.string.bl_scan_stop);
                 break;
-            case Config.QUERY_BL_STATUS_QUERYING:
+            case Commons.QUERY_BL_STATUS_QUERYING:
                 mQueryBl.setClickable(false);
                 mQueryBlStatus.setText(R.string.bl_querying);
-                mCurrentBleScanStatus = Config.BLE_STATUS_NO_SCAN;
+                mCurrentBleScanStatus = Commons.BLE_STATUS_NO_SCAN;
                 mScanBle.setClickable(false);
                 mScanBle.setText(R.string.bl_scan_stop);
                 break;
-            case Config.QUERY_BL_STATUS_ON:
+            case Commons.QUERY_BL_STATUS_ON:
                 mQueryBl.setClickable(false);
                 mQueryBlStatus.setText(R.string.bl_on);
                 mScanBle.setClickable(true);
@@ -266,19 +267,19 @@ public class SplashActivity extends Activity implements View.OnClickListener,
     @Override
     public void onUpdateScanStatus(int status) {
         switch (status) {
-            case Config.BLE_STATUS_NO_SCAN:
-                mCurrentBleScanStatus = Config.BLE_STATUS_NO_SCAN;
+            case Commons.BLE_STATUS_NO_SCAN:
+                mCurrentBleScanStatus = Commons.BLE_STATUS_NO_SCAN;
                 mScanBlStatus.setText(R.string.bl_scan_stop);
                 Log.i(tag, "update.count = " + mBleAdapter.getCount());
                 Log.i(tag, "update.i = " + i);
                 mBleAdapter.notifyDataSetChanged();
                 break;
-            case Config.BLE_STATUS_SCANING:
-                mCurrentBleScanStatus = Config.BLE_STATUS_SCANING;
+            case Commons.BLE_STATUS_SCANING:
+                mCurrentBleScanStatus = Commons.BLE_STATUS_SCANING;
                 mScanBlStatus.setText(R.string.bl_scanning);
                 break;
-            case Config.BLE_STATUS_ERROR_SCAN:
-                mCurrentBleScanStatus = Config.BLE_STATUS_NO_SCAN;
+            case Commons.BLE_STATUS_ERROR_SCAN:
+                mCurrentBleScanStatus = Commons.BLE_STATUS_NO_SCAN;
                 mScanBlStatus.setText(R.string.bl_scan_stop);
                 mBleAdapter.resetData();
                 mBleAdapter.notifyDataSetChanged();

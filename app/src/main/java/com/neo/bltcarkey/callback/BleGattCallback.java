@@ -10,7 +10,6 @@ import com.neo.bltcarkey.common.Commons;
 import com.neo.bltcarkey.common.Config;
 import com.neo.bltcarkey.listener.IBleConnectListener;
 
-import java.util.UUID;
 
 /**
  * author : SenXia
@@ -33,7 +32,7 @@ public class BleGattCallback extends BluetoothGattCallback {
             //连接成功
             if (newState == BluetoothGatt.STATE_CONNECTED) {
                 Log.i("Bluetooth", "连接成功");
-                mIBleConnectStatus.onUpdateConnectStatus(gatt.getDevice(), Config.CONNECT_BLE_SUCCESS);
+                mIBleConnectStatus.onUpdateConnectStatus(gatt.getDevice(), Commons.CONNECT_BLE_SUCCESS);
                 try {
                     Thread.sleep(2000);
                     gatt.discoverServices();
@@ -44,13 +43,13 @@ public class BleGattCallback extends BluetoothGattCallback {
             } else if (newState == BluetoothGatt.STATE_DISCONNECTED) {
                 Log.i("Bluetooth", "断开连接");
                 gatt.close();
-                mIBleConnectStatus.onUpdateConnectStatus(gatt.getDevice(), Config.CONNECT_BLE_DISCONNECT);
+                mIBleConnectStatus.onUpdateConnectStatus(gatt.getDevice(), Commons.CONNECT_BLE_DISCONNECT);
             }
         } else {
             //连接失败
             Log.w("Bluetooth", "失败==" + status);
             gatt.close();
-            mIBleConnectStatus.onUpdateConnectStatus(gatt.getDevice(), Config.CONNECT_BLE_FAILED);
+            mIBleConnectStatus.onUpdateConnectStatus(gatt.getDevice(), Commons.CONNECT_BLE_FAILED);
         }
     }
 
@@ -59,14 +58,14 @@ public class BleGattCallback extends BluetoothGattCallback {
         super.onServicesDiscovered(gatt, status);
         if (status == BluetoothGatt.GATT_SUCCESS) {
             //获取指定uuid的service
-            BluetoothGattService gattService = gatt.getService(Commons.BLE_SERVICE_UUID);
+            BluetoothGattService gattService = gatt.getService(Config.BLE_SERVICE_UUID);
             //获取到特定的服务不为空
             if (gattService != null) {
                 mIBleConnectStatus.setGatt(gatt);
             }
         } else {
             //获取特定服务失败
-            mIBleConnectStatus.onUpdateConnectStatus(gatt.getDevice(), Config.CONNECT_BLE_DISCONNECT);
+            mIBleConnectStatus.onUpdateConnectStatus(gatt.getDevice(), Commons.CONNECT_BLE_DISCONNECT);
         }
 
     }

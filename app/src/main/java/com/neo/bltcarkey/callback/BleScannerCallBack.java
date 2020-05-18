@@ -4,6 +4,7 @@ import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.util.Log;
 
+import com.neo.bltcarkey.common.Commons;
 import com.neo.bltcarkey.listener.IBleStatus;
 import com.neo.bltcarkey.common.Config;
 
@@ -47,7 +48,7 @@ public class BleScannerCallBack extends ScanCallback {
         super.onScanFailed(errorCode);
         Log.i(tag, "onScanFailed");
         if (mBleStatus != null) {
-            mBleStatus.onUpdateScanStatus(Config.BLE_STATUS_ERROR_SCAN);
+            mBleStatus.onUpdateScanStatus(Commons.BLE_STATUS_ERROR_SCAN);
         }
     }
 }

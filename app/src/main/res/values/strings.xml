@@ -40,4 +40,12 @@
     <string name="bl_not_connect">未连接</string>
     <string name="bl_linking">正在连接</string>
     <string name="bl_connected">已经连接</string>
+
+    <string name="rssi">rssi:</string>
+    <string name="ave_rssi">ave rssi:</string>
+    <string name="use_rssi">使用rssi</string>
+    <string name="use_ave_rssi">使用平均值rssi</string>
+    <string name="error_pe_more_than_pb">PE不能大于PB</string>
+    <string name="error_pe_null">PE不能为空</string>
+    <string name="error_pb_null">PB不能为空</string>
 </resources>

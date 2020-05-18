@@ -11,12 +11,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
-import com.neo.bltcarkey.listener.OperationFeedBack;
+import com.neo.bltcarkey.common.Commons;
 import com.neo.bltcarkey.common.Config;
+import com.neo.bltcarkey.listener.OperationFeedBack;
 import com.neo.bltcarkey.common.Utils;
 import com.neo.bltcarkey.widget.BleKeyLayout;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -42,14 +45,18 @@ public class DigitalKeyActivity extends Activity implements OperationFeedBack,
     private Button mCarTruck;
     private Button mCarHorn;
     private Button mCarLight;
+    private Button mSwithcRssi;
 
-    private TextView tv_rssi;
-    private EditText etv_pb;
-    private EditText etv_pe;
+    private TextView mTvRssi;
+    private TextView mAverageRssi;
+    private EditText mEtvPb;
+    private EditText mEtvPe;
     private Button pbtn;
-    private int mCurrentPe = 75;
-    private int mCurrentPb = 90;
+    private int mCurrentPe;
+    private int mCurrentPb;
 
+    private boolean isAveRssi;
+    private List<Integer> mRssiArray;
 
     private BleManager mBleManager;
 
@@ -59,17 +66,47 @@ public class DigitalKeyActivity extends Activity implements OperationFeedBack,
             super.handleMessage(msg);
             if (msg.what == 1) {
                 int rssi = msg.arg1;
-                tv_rssi.setText("rssi:" + rssi);
+                mRssiArray.add(rssi);
+                while (mRssiArray.size() > 10) {
+                    mRssiArray.remove(0);
+                }
+                int currentRssi = 0;
+                if (mRssiArray.size() > 3) {
+                    int max = 0;
+                    int min = 0;
+                    int all = 0;
+                    for (int i : mRssiArray) {
+                        if (i > max) {
+                            max = i;
+                        }
+                        if (i < min) {
+                            min = i;
+                        }
+                        all += i;
+                    }
+                    int current = all - max - min;
+                    currentRssi = current / (mRssiArray.size() - 2);
+                } else {
+                    currentRssi = rssi;
+                }
+                mTvRssi.setText("rssi:" + rssi);
+                mAverageRssi.setText("average rssi:" + currentRssi);
                 if (mBleKeyLayout == null) {
                     return;
                 }
-                int AbsRssi = Math.abs(rssi);
+                int AbsRssi;
+                if (isAveRssi) {
+                    AbsRssi = Math.abs(currentRssi);
+                } else {
+                    AbsRssi = Math.abs(rssi);
+                }
+
                 if (AbsRssi <= mCurrentPe) {
-                    mBleKeyLayout.setStatus(Config.STATUS_PS);
+                    mBleKeyLayout.setStatus(Commons.STATUS_PS);
                 } else if (AbsRssi > mCurrentPe && AbsRssi <= mCurrentPb) {
-                    mBleKeyLayout.setStatus(Config.STATUS_PE);
+                    mBleKeyLayout.setStatus(Commons.STATUS_PE);
                 } else if (AbsRssi > mCurrentPb) {
-                    mBleKeyLayout.setStatus(Config.STATUS_PB);
+                    mBleKeyLayout.setStatus(Commons.STATUS_PB);
                 }
             } else if (msg.what == 2) {
 
@@ -89,7 +126,7 @@ public class DigitalKeyActivity extends Activity implements OperationFeedBack,
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        mBleKeyLayout.setStatus(Config.STATUS_PB);
+        mBleKeyLayout.setStatus(Commons.STATUS_PB);
     }
 
     @Override
@@ -105,28 +142,28 @@ public class DigitalKeyActivity extends Activity implements OperationFeedBack,
         }
         switch (view.getId()) {
             case R.id.leftfront_door:
-                mBleManager.onControlDoors(Config.CONTROL_POSITION_LEFT_FRONT, true);
+                mBleManager.onControlDoors(Commons.CONTROL_POSITION_LEFT_FRONT, true);
                 break;
             case R.id.rightfront_door:
-                mBleManager.onControlDoors(Config.CONTROL_POSITION_RIGHT_FRONT, true);
+                mBleManager.onControlDoors(Commons.CONTROL_POSITION_RIGHT_FRONT, true);
                 break;
             case R.id.leftback_door:
-                mBleManager.onControlDoors(Config.CONTROL_POSITION_LEFT_BACK, true);
+                mBleManager.onControlDoors(Commons.CONTROL_POSITION_LEFT_BACK, true);
                 break;
             case R.id.rightback_door:
-                mBleManager.onControlDoors(Config.CONTROL_POSITION_RIGHT_BACK, true);
+                mBleManager.onControlDoors(Commons.CONTROL_POSITION_RIGHT_BACK, true);
                 break;
             case R.id.leftfront_window:
-                mBleManager.onControlWindows(Config.CONTROL_POSITION_LEFT_FRONT, true);
+                mBleManager.onControlWindows(Commons.CONTROL_POSITION_LEFT_FRONT, true);
                 break;
             case R.id.rightfront_window:
-                mBleManager.onControlWindows(Config.CONTROL_POSITION_RIGHT_FRONT, true);
+                mBleManager.onControlWindows(Commons.CONTROL_POSITION_RIGHT_FRONT, true);
                 break;
             case R.id.leftback_window:
-                mBleManager.onControlWindows(Config.CONTROL_POSITION_LEFT_BACK, true);
+                mBleManager.onControlWindows(Commons.CONTROL_POSITION_LEFT_BACK, true);
                 break;
             case R.id.rightback_window:
-                mBleManager.onControlWindows(Config.CONTROL_POSITION_RIGHT_BACK, true);
+                mBleManager.onControlWindows(Commons.CONTROL_POSITION_RIGHT_BACK, true);
                 break;
             case R.id.car_hood:
                 mBleManager.onControlHood();
@@ -141,11 +178,37 @@ public class DigitalKeyActivity extends Activity implements OperationFeedBack,
                 mBleManager.onControlLight();
                 break;
             case R.id.btn_p:
-                String pe = etv_pe.getText().toString();
-                String pb = etv_pb.getText().toString();
-
-                mCurrentPe = Integer.valueOf(pe);
-                mCurrentPb = Integer.valueOf(pb);
+                String pe = mEtvPe.getText().toString();
+                String pb = mEtvPb.getText().toString();
+                if (pe == null || pe.equals("")) {
+                    Utils.showToast(this, R.string.error_pe_null);
+                    return;
+                }
+                if (pb == null || pb.equals("")) {
+                    Utils.showToast(this, R.string.error_pb_null);
+                    return;
+                }
+                int pei = Integer.valueOf(pe);
+                int pbi = Integer.valueOf(pb);
+                if (pei >= pbi) {
+                    Utils.showToast(this, R.string.error_pe_more_than_pb);
+                } else {
+                    mCurrentPe = pei;
+                    mCurrentPb = pbi;
+                }
+                break;
+            case R.id.switch_rssi:
+                if (isAveRssi) {
+                    isAveRssi = false;
+                    mSwithcRssi.setText(getResources().getText(R.string.use_ave_rssi));
+                    mTvRssi.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccent));
+                    mAverageRssi.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
+                } else {
+                    isAveRssi = true;
+                    mSwithcRssi.setText(getResources().getText(R.string.use_rssi));
+                    mAverageRssi.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccent));
+                    mTvRssi.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
+                }
                 break;
         }
     }
@@ -188,6 +251,7 @@ public class DigitalKeyActivity extends Activity implements OperationFeedBack,
     }
 
     private void initBle() {
+        mRssiArray = new ArrayList<>();
         mBleManager = new BleManager(this, this);
     }
 
@@ -208,8 +272,10 @@ public class DigitalKeyActivity extends Activity implements OperationFeedBack,
         mCarTruck = findViewById(R.id.car_trunk);
         mCarHorn = findViewById(R.id.car_horn);
         mCarLight = findViewById(R.id.car_light);
-        tv_rssi = findViewById(R.id.tv_rssi);
 
+        mTvRssi = findViewById(R.id.tv_rssi);
+        mAverageRssi = findViewById(R.id.tv_ave_rssi);
+        mSwithcRssi = findViewById(R.id.switch_rssi);
 
         mLeftFrontDoor.setOnClickListener(this);
         mRightFrontDoor.setOnClickListener(this);
@@ -223,10 +289,18 @@ public class DigitalKeyActivity extends Activity implements OperationFeedBack,
         mCarHorn.setOnClickListener(this);
         mCarTruck.setOnClickListener(this);
         mCarHood.setOnClickListener(this);
-
-        etv_pb = findViewById(R.id.tv_pb);
-        etv_pe = findViewById(R.id.tv_pe);
+        mSwithcRssi.setOnClickListener(this);
+        mEtvPb = findViewById(R.id.tv_pb);
+        mEtvPb.setText(Config.NORMAL_Pb);
+        mCurrentPb = Integer.valueOf(Config.NORMAL_Pb);
+        mEtvPe = findViewById(R.id.tv_pe);
+        mEtvPe.setText(Config.NORMAL_PE);
+        mCurrentPe = Integer.valueOf(Config.NORMAL_PE);
         pbtn = findViewById(R.id.btn_p);
         pbtn.setOnClickListener(this);
+
+        isAveRssi = false;
+        mTvRssi.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccent));
+        mAverageRssi.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
     }
 }

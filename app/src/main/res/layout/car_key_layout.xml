@@ -8,7 +8,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3">
+        android:layout_weight="4">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -17,54 +17,23 @@
 
             <TextView
                 android:id="@+id/tv_rssi"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="rssi:"
-                android:textColor="@android:color/white" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="PB值:"
-                    android:textColor="@android:color/white" />
-
-                <EditText
-                    android:id="@+id/tv_pb"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:digits="1234567890"
-                    android:hint="90"
-                    android:textColorHint="@android:color/white" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="PE值:"
-                    android:textColor="@android:color/white" />
-
-                <EditText
-                    android:id="@+id/tv_pe"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:hint="75"
-                    android:digits="1234567890"
-                    android:textColorHint="@android:color/white" />
-            </LinearLayout>
-
-            <Button
-                android:id="@+id/btn_p"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="刷新阀值" />
+                android:text="@string/rssi"
+                android:textColor="@android:color/white" />
+
+            <TextView
+                android:id="@+id/tv_ave_rssi"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="@string/ave_rssi"
+                android:textColor="@android:color/white" />
+            <Button
+                android:id="@+id/switch_rssi"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:text="@string/use_ave_rssi"
+                android:background="@drawable/bg_bottom_btn_selector"/>
         </LinearLayout>
 
         <com.neo.bltcarkey.widget.BleKeyLayout
@@ -72,6 +41,58 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PB值:"
+                android:textColor="@android:color/white" />
+
+            <EditText
+                android:id="@+id/tv_pb"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:digits="1234567890"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PE值:"
+                android:textColor="@android:color/white" />
+
+            <EditText
+                android:id="@+id/tv_pe"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:digits="1234567890"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_p"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="刷新阀值" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
